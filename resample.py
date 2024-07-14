@@ -80,14 +80,33 @@ def IDFT(f_axis, H):
         for iFreq in range(len(H)):
             h[iTime] += H[iFreq] * np.exp(1j * 2 * np.pi * f_axis[iFreq] * t_axis[iTime]) * 0.005
 
+    h_real = np.real(h) # 取實部
     plt.figure(figsize=(10, 6))
-    plt.plot(t_axis, h, label='Magnitude Spectrum', linewidth=2)
+    plt.plot(t_axis, h_real, label='Magnitude Spectrum', linewidth=2)
     plt.xlabel('time')
     plt.ylabel('h(t)')
     plt.title('Inverse Discrete Fourier Transform')
     plt.show()
 
+    return h_real
+
+def conv(x, h):
+    y = np.convolve(x, h)  # 使用np.convolve计算卷积
+
+    # 繪製圖像
+    time_axis = np.arange(0, len(y) * sample_rate, sample_rate)  # 调整时间轴
+    plt.figure(figsize=(10, 6))
+    plt.plot(time_axis, y, label='Convolution Result', linewidth=2)
+    plt.xlabel('Time')
+    plt.ylabel('y(t)')
+    plt.title('Convolution')
+    plt.show()
+
+    return y
+
 x = resample(sample_rate, point)
 draw_dft(x)
 f_axis, H = filter()
-IDFT(f_axis, H)
+h = IDFT(f_axis, H)
+y = conv(x, h)
+draw_dft(y)
